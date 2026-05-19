@@ -1,0 +1,146 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+title University Information System - Use Case Diagram
+
+actor "User" as User
+actor "Student" as Student
+actor "Graduate Student" as GraduateStudent
+actor "Teacher" as Teacher
+actor "Manager" as Manager
+actor "Admin" as Admin
+actor "Researcher" as Researcher
+actor "Librarian" as Librarian
+actor "Tech Support Specialist" as TechSupport
+
+User <|-- Student
+Student <|-- GraduateStudent
+User <|-- Teacher
+User <|-- Manager
+User <|-- Admin
+User <|-- Researcher
+User <|-- Librarian
+User <|-- TechSupport
+
+rectangle "University Information System" {
+  usecase "Authenticate" as UC_Login
+  usecase "Choose Language\n(KZ / EN / RU)" as UC_Language
+  usecase "Change Password" as UC_ChangePassword
+  usecase "View News" as UC_ViewNews
+  usecase "Send Message" as UC_SendMessage
+  usecase "Subscribe to Journal" as UC_SubscribeJournal
+  usecase "Receive Journal\nNotification" as UC_ReceiveNotification
+
+  usecase "View Courses" as UC_ViewCourses
+  usecase "Register for Course" as UC_RegisterCourse
+  usecase "Drop Course" as UC_DropCourse
+  usecase "View Teacher Info" as UC_ViewTeacherInfo
+  usecase "View Marks" as UC_ViewMarks
+  usecase "View Transcript" as UC_ViewTranscript
+  usecase "Rate Teacher" as UC_RateTeacher
+  usecase "Order Book" as UC_OrderBook
+  usecase "View Attendance" as UC_ViewAttendance
+  usecase "View Organization Info" as UC_ViewOrganization
+  usecase "Manage Diploma Papers" as UC_DiplomaPapers
+
+  usecase "Manage Course Files" as UC_ManageCourseFiles
+  usecase "Put Marks" as UC_PutMarks
+  usecase "View Students" as UC_ViewStudents
+  usecase "Send Complaint\nto Dean" as UC_Complaint
+  usecase "Mark Attendance" as UC_MarkAttendance
+
+  usecase "Create Course" as UC_CreateCourse
+  usecase "Assign Teachers\nto Course" as UC_AssignTeachers
+  usecase "Approve / Reject\nRegistration" as UC_ApproveRegistration
+  usecase "Manage News" as UC_ManageNews
+  usecase "Generate Academic Report" as UC_Report
+  usecase "View Students / Teachers\nSorted" as UC_SortedInfo
+
+  usecase "Manage Users" as UC_ManageUsers
+  usecase "View Action Logs" as UC_ViewLogs
+
+  usecase "Manage Books" as UC_ManageBooks
+  usecase "Approve / Reject\nBook Orders" as UC_BookOrders
+
+  usecase "Submit Tech Request" as UC_SubmitTech
+  usecase "View Tech Requests" as UC_ViewTech
+  usecase "Accept / Reject /\nComplete Request" as UC_ProcessTech
+
+  usecase "Add Research Paper" as UC_AddPaper
+  usecase "Calculate h-index" as UC_HIndex
+  usecase "Print Own Papers\nSorted" as UC_PrintOwnPapers
+  usecase "Print All Papers\nSorted" as UC_PrintAllPapers
+  usecase "View Research Projects" as UC_ViewProjects
+  usecase "Publish Paper to Journal" as UC_PublishPaper
+}
+
+User --> UC_Login
+User --> UC_Language
+User --> UC_ChangePassword
+User --> UC_ViewNews
+User --> UC_SubscribeJournal
+User --> UC_ReceiveNotification
+User --> UC_SubmitTech
+
+Student --> UC_ViewCourses
+Student --> UC_RegisterCourse
+Student --> UC_DropCourse
+Student --> UC_ViewTeacherInfo
+Student --> UC_ViewMarks
+Student --> UC_ViewTranscript
+Student --> UC_RateTeacher
+Student --> UC_OrderBook
+Student --> UC_ViewAttendance
+Student --> UC_ViewOrganization
+
+GraduateStudent --> UC_DiplomaPapers
+GraduateStudent --> UC_HIndex
+GraduateStudent --> UC_PrintOwnPapers
+
+Teacher --> UC_ViewCourses
+Teacher --> UC_ManageCourseFiles
+Teacher --> UC_PutMarks
+Teacher --> UC_ViewStudents
+Teacher --> UC_SendMessage
+Teacher --> UC_Complaint
+Teacher --> UC_MarkAttendance
+Teacher --> UC_ViewAttendance
+Teacher --> UC_HIndex
+Teacher --> UC_PrintOwnPapers
+Teacher --> UC_PrintAllPapers
+
+Manager --> UC_CreateCourse
+Manager --> UC_AssignTeachers
+Manager --> UC_ApproveRegistration
+Manager --> UC_ManageNews
+Manager --> UC_Report
+Manager --> UC_SortedInfo
+Manager --> UC_SendMessage
+
+Admin --> UC_ManageUsers
+Admin --> UC_ViewLogs
+Admin --> UC_SendMessage
+
+Librarian --> UC_ManageBooks
+Librarian --> UC_BookOrders
+
+TechSupport --> UC_ViewTech
+TechSupport --> UC_ProcessTech
+
+Researcher --> UC_AddPaper
+Researcher --> UC_HIndex
+Researcher --> UC_PrintOwnPapers
+Researcher --> UC_PrintAllPapers
+Researcher --> UC_ViewProjects
+Researcher --> UC_PublishPaper
+Researcher --> UC_SendMessage
+
+UC_RegisterCourse .> UC_Login : <<include>>
+UC_PutMarks .> UC_Login : <<include>>
+UC_AddPaper .> UC_PublishPaper : <<extend>>
+UC_PublishPaper .> UC_ReceiveNotification : <<include>>
+UC_PublishPaper .> UC_ViewNews : <<include>>
+
+@enduml

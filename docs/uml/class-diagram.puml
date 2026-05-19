@@ -1,0 +1,460 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+hide empty members
+
+title University Information System - Class Diagram
+
+package "controller" {
+  class MainController {
+    +main(args: String[]): void
+    -seedDemoData(): void
+    -subscribeToJournal(user: User): void
+    -printAllResearchPapers(comparator: Comparator<ResearchPaper>): void
+  }
+}
+
+package "model.user" {
+  abstract class User {
+    -name: String
+    -surname: String
+    -login: String
+    -password: String
+    -language: Language
+    +getRole(): String
+    +signIn(login: String, password: String): boolean
+    +changePassword(oldPassword: String, newPassword: String): boolean
+    +viewNewsTab(): String
+    +onNewPaperPublished(journalName: String, paperTitle: String, authorName: String): void
+  }
+
+  abstract class Employee {
+    +sendMessage(messageFrom: String, messageTo: String, title: String, text: String): void
+    +getMessages(): String
+  }
+
+  class Student {
+    -id: String
+    -yearOfStudy: Integer
+    -faculty: Faculty
+    -degree: Degree
+    -creditLimit: Integer
+    -chosenCredits: Integer
+    -researchMixin: ResearcherMixin
+    +registerToCourse(courseID: String): void
+    +dropCourse(courseId: String): void
+    +totalGpa(): String
+    +viewTranscript(): String
+    +viewMarks(): String
+    +viewAttendance(): String
+    +rateTeacher(teacherName: String, rating: int): void
+    +orderBook(bookId: String): void
+    +becomeResearcher(): void
+    +joinOrganization(orgName: String, asHead: boolean): void
+  }
+
+  class GraduateStudent {
+    -graduateDegree: Degree
+    -supervisor: Teacher
+    -diplomaPapers: List<ResearchPaper>
+    -researchMixin: ResearcherMixin
+    +setSupervisor(supervisor: Teacher): void
+    +addDiplomaPaper(paper: ResearchPaper): void
+    +calculateHIndex(): int
+    +printPapers(c: Comparator<ResearchPaper>): void
+  }
+
+  class Teacher {
+    -teacherStatus: Status
+    -courses: Vector<Course>
+    -rating: double
+    -researchMixin: ResearcherMixin
+    +putMark(courseName: String, studentId: String, firstAtt: Double, secondAtt: Double, finalGrade: Double): void
+    +sendComplaint(student: Student, reason: String, urgency: ComplaintUrgency, dean: Manager): void
+    +viewStudents(): String
+    +viewStudentInfo(name: String): String
+    +addCourseFile(fileName: String, courseId: String, description: String): void
+    +markAttendance(courseId: String, studentId: String, present: boolean, note: String): void
+    +viewAttendance(courseId: String): String
+    +becomeResearcher(): void
+  }
+
+  class Manager {
+    -managerType: Managers
+    +createCourse(name: String, credits: int, courseId: String): void
+    +createCourse(name: String, credits: int, courseId: String, type: CourseType, school: String, year: int): void
+    +assignCourseToTeachers(courseId: String, teacherName: String): void
+    +approveRegistration(studentId: String, courseId: String, approve: String): String
+    +addNews(id: String, topic: String, title: String, text: String): void
+    +generateReport(): String
+    +orderStudentsByGPA(): String
+    +orderStudentsAlphabetically(): String
+  }
+
+  class Admin {
+    -actionLog: List<String>
+    +createStudent(name: String, surname: String, id: String): void
+    +createTeacher(name: String, surname: String): void
+    +createManager(name: String, surname: String): void
+    +deleteUser(login: String): boolean
+    +updateUserEmail(login: String, newEmail: String): void
+    +seeLogFiles(): void
+  }
+
+  class Librarian {
+    +addBook(title: String, id: String, author: String): void
+    +removeBook(id: String): void
+    +updateOrderBook(studentId: String, bookId: String, request: String): String
+    +viewOrders(): String
+  }
+
+  class TechSupportSpecialist {
+    +receiveRequest(request: TechRequest): void
+    +acceptRequest(request: TechRequest): void
+    +rejectRequest(request: TechRequest): void
+    +completeRequest(request: TechRequest): void
+    +viewNewRequests(): String
+    +viewAllRequests(): String
+  }
+
+  interface Reportable {
+    +generateReport(): String
+  }
+}
+
+package "model.research" {
+  interface Subscribable {
+    +onNewPaperPublished(journalName: String, paperTitle: String, authorName: String): void
+  }
+
+  class Researcher {
+    -researchMixin: ResearcherMixin
+    +calculateHIndex(): int
+    +addPaper(p: ResearchPaper): void
+    +addProject(p: ResearchProject): void
+    +printPapers(c: Comparator<ResearchPaper>): void
+  }
+
+  class ResearcherMixin {
+    -papers: List<ResearchPaper>
+    -projects: List<ResearchProject>
+    +addPaper(paper: ResearchPaper): void
+    +addProject(project: ResearchProject): void
+    +calculateHIndex(): int
+    +printPapers(c: Comparator<ResearchPaper>): void
+  }
+
+  class ResearchPaper {
+    -title: String
+    -authors: List<String>
+    -journal: String
+    -pages: int
+    -datePublished: LocalDate
+    -doi: String
+    -citations: int
+    +getCitation(format: CitationFormat): String
+    +addCitation(): void
+    +compareTo(other: ResearchPaper): int
+  }
+
+  class ResearchProject {
+    -topic: String
+    -publishedPapers: List<ResearchPaper>
+    -participants: List<User>
+    +addParticipant(user: User): void
+    +addPaper(paper: ResearchPaper): void
+  }
+
+  class UniversityJournal {
+    -name: String
+    -subscribers: List<Subscribable>
+    -papers: List<ResearchPaper>
+    +subscribe(s: Subscribable): void
+    +unsubscribe(s: Subscribable): void
+    +publishPaper(paper: ResearchPaper, authorName: String): void
+  }
+}
+
+package "model.course" {
+  class Course {
+    -courseName: String
+    -credits: Integer
+    -courseId: String
+    -courseType: CourseType
+    -school: String
+    -targetYear: int
+    -teacher: Vector<String>
+    -students: Vector<Student>
+    +addStudent(studentId: String): boolean
+    +removeStudent(studentId: String): boolean
+    +addCourseFile(fileName: String, courseId: String, desc: String): void
+  }
+
+  class Mark {
+    -courseName: String
+    -studentId: String
+    -firstAtt: Double
+    -secondAtt: Double
+    -finalGrade: Double
+    -totalGrade: Double
+    +isPassed(): boolean
+    +convertToLetter(): String
+    +convertToGPA(): String
+  }
+
+  class Lesson {
+    -lessonType: LessonType
+    -time: Date
+    -room: String
+    -courseId: String
+    -teacherLogin: String
+  }
+
+  class Attendance {
+    -courseId: String
+    -studentId: String
+    -date: Date
+    -present: boolean
+    -note: String
+  }
+
+  class File {
+    -fileName: String
+    -courseId: String
+    -description: String
+    -postDate: Date
+  }
+}
+
+package "model.common" {
+  class News {
+    -id: String
+    -topic: String
+    -title: String
+    -text: String
+    -comments: Vector<String>
+    -pinned: boolean
+    +addComment(comment: String): void
+    +compareTo(other: News): int
+  }
+
+  class Message {
+    -messageFrom: String
+    -messageTo: String
+    -title: String
+    -text: String
+    -msgDate: Date
+  }
+
+  class Book {
+    -title: String
+    -id: String
+    -author: String
+  }
+
+  class TechRequest {
+    -id: String
+    -requesterLogin: String
+    -description: String
+    -status: RequestStatus
+  }
+
+  class StudentOrganization {
+    -name: String
+    -headStudentId: String
+    -memberIds: Vector<String>
+  }
+
+  class I18n {
+    +t(key: String, lang: Language): String
+  }
+
+  enum BookRequest {
+    ACCEPT
+    REJECT
+  }
+}
+
+package "repository" {
+  class Database <<Singleton>> {
+    +users: Vector<User>
+    +courses: Vector<Course>
+    +marks: Vector<Mark>
+    +messages: Vector<Message>
+    +news: Vector<News>
+    +attendance: Vector<Attendance>
+    +journals: Vector<UniversityJournal>
+    +getInstance(): Database
+    +save(): void
+    +load(): void
+  }
+}
+
+package "service" {
+  class UserFactory <<Factory>> {
+    +createUser(type: UserType, name: String, surname: String, password: String): User
+  }
+
+  class PaperComparators <<Strategy>> {
+    +BY_DATE: Comparator<ResearchPaper>
+    +BY_CITATIONS: Comparator<ResearchPaper>
+    +BY_LENGTH: Comparator<ResearchPaper>
+  }
+
+  class GPASorter
+  class NameComparator
+  class StatusComparator
+
+  interface Comparator
+  interface Comparable
+}
+
+package "enumm" {
+  enum Language {
+    KZ
+    EN
+    RU
+  }
+
+  enum LessonType {
+    LECTURE
+    PRACTICE
+  }
+
+  enum CourseType {
+    MAJOR
+    MINOR
+    FREE_ELECTIVE
+  }
+
+  enum Degree {
+    BACHELOR
+    MASTER
+    PHD
+  }
+
+  enum Faculty {
+    FIT
+    FGGE
+    ISE
+    FGE
+    FEOG
+    BS
+    SMC
+    KMA
+    CCE
+  }
+
+  enum Status {
+    ASSISTANT
+    TUTOR
+    LECTOR
+    SENIOR_LECTOR
+    PROFESSOR
+  }
+
+  enum Managers {
+    DEPARTMENTS
+    OR
+    SECURITY
+  }
+
+  enum RequestStatus {
+    NEW
+    VIEWED
+    ACCEPTED
+    REJECTED
+    DONE
+  }
+
+  enum ComplaintUrgency {
+    LOW
+    MEDIUM
+    HIGH
+  }
+
+  enum CitationFormat {
+    PLAIN_TEXT
+    BIBTEX
+  }
+
+  enum Grade {
+    A_PLUS
+    A_MINUS
+    B_PLUS
+    B
+    B_MINUS
+    C_PLUS
+    C
+    C_MINUS
+    D
+    F
+  }
+}
+
+package "exception" {
+  class CreditOverFlow
+  class CourseFailLimitException
+  class LowHIndexException
+  class NotAResearcherException
+  class UserNotExists
+}
+
+User <|-- Student
+Student <|-- GraduateStudent
+User <|-- Employee
+Employee <|-- Teacher
+Employee <|-- Manager
+Employee <|-- Admin
+Employee <|-- Librarian
+Employee <|-- TechSupportSpecialist
+Employee <|-- Researcher
+
+User ..|> Subscribable
+Manager ..|> Reportable
+ResearchPaper ..|> Comparable
+News ..|> Comparable
+GPASorter ..|> Comparator
+NameComparator ..|> Comparator
+StatusComparator ..|> Comparator
+
+Student "0..*" -- "0..*" Course : enrolled
+Course "1" -- "0..*" Lesson : scheduled by courseId
+Course "1" o-- "0..*" File : courseFiles
+Student "1" --> "0..*" Mark
+Student "1" --> "0..*" Attendance
+Teacher "1" --> "0..*" Mark
+Teacher "1" --> "0..*" Attendance
+Teacher "0..1" *-- ResearcherMixin
+GraduateStudent "1" *-- ResearcherMixin
+Researcher "1" *-- ResearcherMixin
+GraduateStudent "0..1" --> Teacher : supervisor
+GraduateStudent "1" o-- "0..*" ResearchPaper : diplomaPapers
+
+ResearcherMixin "1" o-- "0..*" ResearchPaper
+ResearcherMixin "1" o-- "0..*" ResearchProject
+ResearchProject "1" o-- "0..*" ResearchPaper
+ResearchProject "1" o-- "0..*" User : participants
+UniversityJournal "1" o-- "0..*" ResearchPaper
+UniversityJournal "1" o-- "0..*" Subscribable : subscribers
+UniversityJournal ..> News : creates announcement
+
+Admin ..> UserFactory : creates users
+MainController ..> Database
+MainController ..> UserFactory
+MainController ..> PaperComparators
+Database o-- "0..*" User
+Database o-- "0..*" Course
+Database o-- "0..*" Mark
+Database o-- "0..*" News
+Database o-- "0..*" Message
+Database o-- "0..*" TechRequest
+Database o-- "0..*" UniversityJournal
+Database o-- "0..*" Attendance
+
+Student ..> CreditOverFlow
+Student ..> CourseFailLimitException
+GraduateStudent ..> LowHIndexException
+ResearchProject ..> NotAResearcherException
+
+@enduml
