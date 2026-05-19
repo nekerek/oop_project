@@ -1,12 +1,35 @@
 @startuml
+left to right direction
+
 skinparam classAttributeIconSize 0
 skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 45
+skinparam ranksep 45
+skinparam ArrowColor #4A5568
+skinparam ClassBorderColor #2D3748
+skinparam ClassFontColor #1A202C
+skinparam PackageBorderColor #4A5568
+skinparam backgroundColor #FFFFFF
+
+skinparam class {
+  BackgroundColor<<user>> #D9ECFF
+  BackgroundColor<<research>> #DFF4DD
+  BackgroundColor<<academic>> #FFF4CC
+  BackgroundColor<<system>> #EEEEEE
+  BackgroundColor<<exception>> #F8D7DA
+  BackgroundColor<<enum>> #FFE0B2
+  BackgroundColor<<external>> #F7FAFC
+  BorderColor #2D3748
+}
+
 hide empty members
 
 title University Information System - Class Diagram
 
-package "controller" {
-  class MainController {
+package "controller" #EEEEEE {
+  class MainController <<system>> {
     +main(args: String[]): void
     -seedDemoData(): void
     -subscribeToJournal(user: User): void
@@ -14,10 +37,13 @@ package "controller" {
   }
 }
 
-package "model.user" {
-  abstract class User {
+package "model.user" #D9ECFF {
+  abstract class User <<user>> {
     -name: String
     -surname: String
+    -birthDate: String
+    -phoneNumber: String
+    -email: String
     -login: String
     -password: String
     -language: Language
@@ -26,21 +52,29 @@ package "model.user" {
     +changePassword(oldPassword: String, newPassword: String): boolean
     +viewNewsTab(): String
     +onNewPaperPublished(journalName: String, paperTitle: String, authorName: String): void
+    +compareTo(other: User): int
   }
 
-  abstract class Employee {
+  abstract class Employee <<user>> {
     +sendMessage(messageFrom: String, messageTo: String, title: String, text: String): void
     +getMessages(): String
   }
 
-  class Student {
+  class Student <<user>> {
     -id: String
     -yearOfStudy: Integer
+    -totalCredits: Integer
+    -GPA: Double
+    #courses: Vector<Course>
     -faculty: Faculty
     -degree: Degree
     -creditLimit: Integer
     -chosenCredits: Integer
+    -failCounts: Map<String, Integer>
     -researchMixin: ResearcherMixin
+    -organizationName: String
+    -isOrgHead: boolean
+    -isGraduated: boolean
     +registerToCourse(courseID: String): void
     +dropCourse(courseId: String): void
     +totalGpa(): String
@@ -53,7 +87,7 @@ package "model.user" {
     +joinOrganization(orgName: String, asHead: boolean): void
   }
 
-  class GraduateStudent {
+  class GraduateStudent <<user>> {
     -graduateDegree: Degree
     -supervisor: Teacher
     -diplomaPapers: List<ResearchPaper>
@@ -64,10 +98,12 @@ package "model.user" {
     +printPapers(c: Comparator<ResearchPaper>): void
   }
 
-  class Teacher {
+  class Teacher <<user>> {
     -teacherStatus: Status
     -courses: Vector<Course>
+    -experience: String
     -rating: double
+    -ratingCnt: int
     -researchMixin: ResearcherMixin
     +putMark(courseName: String, studentId: String, firstAtt: Double, secondAtt: Double, finalGrade: Double): void
     +sendComplaint(student: Student, reason: String, urgency: ComplaintUrgency, dean: Manager): void
@@ -79,7 +115,7 @@ package "model.user" {
     +becomeResearcher(): void
   }
 
-  class Manager {
+  class Manager <<user>> {
     -managerType: Managers
     +createCourse(name: String, credits: int, courseId: String): void
     +createCourse(name: String, credits: int, courseId: String, type: CourseType, school: String, year: int): void
@@ -91,24 +127,25 @@ package "model.user" {
     +orderStudentsAlphabetically(): String
   }
 
-  class Admin {
+  class Admin <<user>> {
     -actionLog: List<String>
-    +createStudent(name: String, surname: String, id: String): void
-    +createTeacher(name: String, surname: String): void
-    +createManager(name: String, surname: String): void
+    +createStudent(name: String, surname: String, birthDate: String, phoneNumber: String, email: String, password: String, id: String, yearOfStudy: Integer): void
+    +createTeacher(name: String, surname: String, birthDate: String, phoneNumber: String, email: String, password: String, experience: String): void
+    +createManager(name: String, surname: String, birthDate: String, phoneNumber: String, email: String, password: String): void
+    +createLibrarian(name: String, surname: String, birthDate: String, phoneNumber: String, email: String, password: String): void
     +deleteUser(login: String): boolean
     +updateUserEmail(login: String, newEmail: String): void
     +seeLogFiles(): void
   }
 
-  class Librarian {
+  class Librarian <<user>> {
     +addBook(title: String, id: String, author: String): void
     +removeBook(id: String): void
     +updateOrderBook(studentId: String, bookId: String, request: String): String
     +viewOrders(): String
   }
 
-  class TechSupportSpecialist {
+  class TechSupportSpecialist <<user>> {
     +receiveRequest(request: TechRequest): void
     +acceptRequest(request: TechRequest): void
     +rejectRequest(request: TechRequest): void
@@ -117,17 +154,17 @@ package "model.user" {
     +viewAllRequests(): String
   }
 
-  interface Reportable {
+  interface Reportable <<user>> {
     +generateReport(): String
   }
 }
 
-package "model.research" {
-  interface Subscribable {
+package "model.research" #DFF4DD {
+  interface Subscribable <<research>> {
     +onNewPaperPublished(journalName: String, paperTitle: String, authorName: String): void
   }
 
-  class Researcher {
+  class Researcher <<research>> {
     -researchMixin: ResearcherMixin
     +calculateHIndex(): int
     +addPaper(p: ResearchPaper): void
@@ -135,7 +172,7 @@ package "model.research" {
     +printPapers(c: Comparator<ResearchPaper>): void
   }
 
-  class ResearcherMixin {
+  class ResearcherMixin <<research>> {
     -papers: List<ResearchPaper>
     -projects: List<ResearchProject>
     +addPaper(paper: ResearchPaper): void
@@ -144,7 +181,7 @@ package "model.research" {
     +printPapers(c: Comparator<ResearchPaper>): void
   }
 
-  class ResearchPaper {
+  class ResearchPaper <<research>> {
     -title: String
     -authors: List<String>
     -journal: String
@@ -157,7 +194,7 @@ package "model.research" {
     +compareTo(other: ResearchPaper): int
   }
 
-  class ResearchProject {
+  class ResearchProject <<research>> {
     -topic: String
     -publishedPapers: List<ResearchPaper>
     -participants: List<User>
@@ -165,7 +202,7 @@ package "model.research" {
     +addPaper(paper: ResearchPaper): void
   }
 
-  class UniversityJournal {
+  class UniversityJournal <<research>> {
     -name: String
     -subscribers: List<Subscribable>
     -papers: List<ResearchPaper>
@@ -175,22 +212,26 @@ package "model.research" {
   }
 }
 
-package "model.course" {
-  class Course {
+package "model.course" #FFF4CC {
+  class Course <<academic>> {
     -courseName: String
     -credits: Integer
+    -description: String
     -courseId: String
+    -isAvailable: Boolean
     -courseType: CourseType
     -school: String
     -targetYear: int
-    -teacher: Vector<String>
+    #teacher: Vector<String>
     -students: Vector<Student>
+    #courseFiles: Vector<File>
+    -prerequisite: Vector<String>
     +addStudent(studentId: String): boolean
     +removeStudent(studentId: String): boolean
     +addCourseFile(fileName: String, courseId: String, desc: String): void
   }
 
-  class Mark {
+  class Mark <<academic>> {
     -courseName: String
     -studentId: String
     -firstAtt: Double
@@ -202,7 +243,13 @@ package "model.course" {
     +convertToGPA(): String
   }
 
-  class Lesson {
+  class Transcript <<academic>> {
+    -courseName: String
+    -GPA: double
+    +calculateGPA(): void
+  }
+
+  class Lesson <<academic>> {
     -lessonType: LessonType
     -time: Date
     -room: String
@@ -210,7 +257,7 @@ package "model.course" {
     -teacherLogin: String
   }
 
-  class Attendance {
+  class Attendance <<academic>> {
     -courseId: String
     -studentId: String
     -date: Date
@@ -218,7 +265,7 @@ package "model.course" {
     -note: String
   }
 
-  class File {
+  class File <<academic>> {
     -fileName: String
     -courseId: String
     -description: String
@@ -226,19 +273,20 @@ package "model.course" {
   }
 }
 
-package "model.common" {
-  class News {
+package "model.common" #EEEEEE {
+  class News <<system>> {
     -id: String
     -topic: String
     -title: String
     -text: String
     -comments: Vector<String>
+    -postDate: Date
     -pinned: boolean
     +addComment(comment: String): void
     +compareTo(other: News): int
   }
 
-  class Message {
+  class Message <<system>> {
     -messageFrom: String
     -messageTo: String
     -title: String
@@ -246,94 +294,112 @@ package "model.common" {
     -msgDate: Date
   }
 
-  class Book {
+  class Book <<system>> {
     -title: String
     -id: String
     -author: String
   }
 
-  class TechRequest {
+  class TechRequest <<system>> {
     -id: String
     -requesterLogin: String
     -description: String
     -status: RequestStatus
+    -createdAt: Date
   }
 
-  class StudentOrganization {
+  class StudentOrganization <<system>> {
     -name: String
     -headStudentId: String
     -memberIds: Vector<String>
   }
 
-  class I18n {
+  class I18n <<system>> {
     +t(key: String, lang: Language): String
   }
 
-  enum BookRequest {
+  enum BookRequest <<enum>> {
     ACCEPT
     REJECT
   }
 }
 
-package "repository" {
+package "repository" #EEEEEE {
   class Database <<Singleton>> {
-    +users: Vector<User>
-    +courses: Vector<Course>
-    +marks: Vector<Mark>
-    +messages: Vector<Message>
-    +news: Vector<News>
-    +attendance: Vector<Attendance>
-    +journals: Vector<UniversityJournal>
-    +getInstance(): Database
-    +save(): void
-    +load(): void
+    -instance: Database
+    {static} +users: Vector<User>
+    {static} +courses: Vector<Course>
+    {static} +studentRegistration: HashMap<String, Course>
+    {static} +marks: Vector<Mark>
+    {static} +messages: Vector<Message>
+    {static} +files: Vector<File>
+    {static} +books: HashSet<Book>
+    {static} +orders: HashMap<String, Book>
+    {static} +news: Vector<News>
+    {static} +lessons: Vector<Lesson>
+    {static} +attendance: Vector<Attendance>
+    {static} +techRequests: Vector<TechRequest>
+    {static} +journals: Vector<UniversityJournal>
+    {static} +organizations: Vector<StudentOrganization>
+    {static} +researchProjects: Vector<ResearchProject>
+    {static} +getInstance(): Database
+    {static} +save(): void
+    {static} +load(): void
   }
 }
 
-package "service" {
+package "service" #EEEEEE {
   class UserFactory <<Factory>> {
-    +createUser(type: UserType, name: String, surname: String, password: String): User
+    {static} +createUser(type: UserType, name: String, surname: String, birthDate: String, phoneNumber: String, email: String, password: String, extras: Object...): User
+  }
+
+  enum "UserFactory.UserType" as UserType <<enum>> {
+    STUDENT
+    GRADUATE_STUDENT
+    TEACHER
+    MANAGER
+    ADMIN
+    LIBRARIAN
+    TECH_SUPPORT
+    RESEARCHER
   }
 
   class PaperComparators <<Strategy>> {
-    +BY_DATE: Comparator<ResearchPaper>
-    +BY_CITATIONS: Comparator<ResearchPaper>
-    +BY_LENGTH: Comparator<ResearchPaper>
+    {static} +BY_DATE: Comparator<ResearchPaper>
+    {static} +BY_CITATIONS: Comparator<ResearchPaper>
+    {static} +BY_LENGTH: Comparator<ResearchPaper>
   }
 
-  class GPASorter
-  class NameComparator
-  class StatusComparator
-
-  interface Comparator
-  interface Comparable
+  class GPASorter <<Strategy>>
+  class NameComparator <<Strategy>>
+  class StatusComparator <<Strategy>>
 }
 
-package "enumm" {
-  enum Language {
+package "enumm" #FFE0B2 {
+  enum Language <<enum>> {
     KZ
     EN
     RU
   }
 
-  enum LessonType {
+  enum LessonType <<enum>> {
     LECTURE
     PRACTICE
   }
 
-  enum CourseType {
+  enum CourseType <<enum>> {
     MAJOR
     MINOR
     FREE_ELECTIVE
   }
 
-  enum Degree {
+  enum Degree <<enum>> {
     BACHELOR
     MASTER
     PHD
   }
 
-  enum Faculty {
+  enum Faculty <<enum>> {
     FIT
     FGGE
     ISE
@@ -345,7 +411,7 @@ package "enumm" {
     CCE
   }
 
-  enum Status {
+  enum Status <<enum>> {
     ASSISTANT
     TUTOR
     LECTOR
@@ -353,13 +419,13 @@ package "enumm" {
     PROFESSOR
   }
 
-  enum Managers {
+  enum Managers <<enum>> {
     DEPARTMENTS
     OR
     SECURITY
   }
 
-  enum RequestStatus {
+  enum RequestStatus <<enum>> {
     NEW
     VIEWED
     ACCEPTED
@@ -367,18 +433,18 @@ package "enumm" {
     DONE
   }
 
-  enum ComplaintUrgency {
+  enum ComplaintUrgency <<enum>> {
     LOW
     MEDIUM
     HIGH
   }
 
-  enum CitationFormat {
+  enum CitationFormat <<enum>> {
     PLAIN_TEXT
     BIBTEX
   }
 
-  enum Grade {
+  enum Grade <<enum>> {
     A_PLUS
     A_MINUS
     B_PLUS
@@ -392,43 +458,60 @@ package "enumm" {
   }
 }
 
-package "exception" {
-  class CreditOverFlow
-  class CourseFailLimitException
-  class LowHIndexException
-  class NotAResearcherException
-  class UserNotExists
+package "exception" #F8D7DA {
+  class CreditOverFlow <<exception>>
+  class CourseFailLimitException <<exception>>
+  class LowHIndexException <<exception>>
+  class NotAResearcherException <<exception>>
+  class UserNotExists <<exception>>
 }
 
-User <|-- Student
-Student <|-- GraduateStudent
-User <|-- Employee
-Employee <|-- Teacher
-Employee <|-- Manager
-Employee <|-- Admin
-Employee <|-- Librarian
-Employee <|-- TechSupportSpecialist
-Employee <|-- Researcher
+package "external Java API" #F7FAFC {
+  interface "Serializable" as Serializable <<external>>
+  interface "Comparable<T>" as Comparable <<external>>
+  interface "Comparator<T>" as Comparator <<external>>
+  class Exception <<external>>
+}
+
+together {
+  User <|-- Student
+  Student <|-- GraduateStudent
+  User <|-- Employee
+  Employee <|-- Teacher
+  Employee <|-- Manager
+  Employee <|-- Admin
+  Employee <|-- Librarian
+  Employee <|-- TechSupportSpecialist
+  Employee <|-- Researcher
+}
 
 User ..|> Subscribable
+User ..|> Comparable
+User ..|> Serializable
 Manager ..|> Reportable
 ResearchPaper ..|> Comparable
 News ..|> Comparable
 GPASorter ..|> Comparator
 NameComparator ..|> Comparator
 StatusComparator ..|> Comparator
+CreditOverFlow --|> Exception
+CourseFailLimitException --|> Exception
+LowHIndexException --|> Exception
+NotAResearcherException --|> Exception
+UserNotExists --|> Exception
 
 Student "0..*" -- "0..*" Course : enrolled
-Course "1" -- "0..*" Lesson : scheduled by courseId
 Course "1" o-- "0..*" File : courseFiles
-Student "1" --> "0..*" Mark
-Student "1" --> "0..*" Attendance
-Teacher "1" --> "0..*" Mark
-Teacher "1" --> "0..*" Attendance
-Teacher "0..1" *-- ResearcherMixin
-GraduateStudent "1" *-- ResearcherMixin
-Researcher "1" *-- ResearcherMixin
-GraduateStudent "0..1" --> Teacher : supervisor
+Course "1" --> "0..*" Lesson : courseId
+Course "1" --> "0..*" Mark : courseName
+Course "1" --> "0..*" Attendance : courseId
+Student "1" --> "0..*" Mark : studentId
+Student "1" --> "0..*" Attendance : studentId
+Student "0..1" *-- "0..1" ResearcherMixin : optional research
+Teacher "0..1" *-- "0..1" ResearcherMixin : optional/professor
+GraduateStudent "1" *-- "1" ResearcherMixin
+Researcher "1" *-- "1" ResearcherMixin
+GraduateStudent "0..1" --> "1" Teacher : supervisor
 GraduateStudent "1" o-- "0..*" ResearchPaper : diplomaPapers
 
 ResearcherMixin "1" o-- "0..*" ResearchPaper
@@ -439,22 +522,50 @@ UniversityJournal "1" o-- "0..*" ResearchPaper
 UniversityJournal "1" o-- "0..*" Subscribable : subscribers
 UniversityJournal ..> News : creates announcement
 
+Student ..> Book : orders
+Student ..> StudentOrganization : joins
+Employee ..> Message : sends/reads
+TechSupportSpecialist ..> TechRequest : processes
+Librarian ..> Book : manages
+Manager ..> Course : creates/assigns
+Manager ..> News : manages
+Teacher ..> Mark : creates
+Teacher ..> Attendance : records
+Teacher ..> File : uploads
+
 Admin ..> UserFactory : creates users
+UserFactory ..> UserType
+UserFactory ..> User : instantiates
+PaperComparators ..> Comparator : exposes strategies
 MainController ..> Database
 MainController ..> UserFactory
 MainController ..> PaperComparators
+
 Database o-- "0..*" User
 Database o-- "0..*" Course
 Database o-- "0..*" Mark
 Database o-- "0..*" News
 Database o-- "0..*" Message
+Database o-- "0..*" File
+Database o-- "0..*" Book
 Database o-- "0..*" TechRequest
 Database o-- "0..*" UniversityJournal
 Database o-- "0..*" Attendance
+Database o-- "0..*" StudentOrganization
+Database o-- "0..*" ResearchProject
 
 Student ..> CreditOverFlow
 Student ..> CourseFailLimitException
 GraduateStudent ..> LowHIndexException
 ResearchProject ..> NotAResearcherException
+
+legend right
+  <back:#D9ECFF> User hierarchy </back>
+  <back:#DFF4DD> Research module </back>
+  <back:#FFF4CC> Academic/Course module </back>
+  <back:#EEEEEE> Persistence/System/Common module </back>
+  <back:#F8D7DA> Exceptions </back>
+  <back:#FFE0B2> Enums </back>
+endlegend
 
 @enduml

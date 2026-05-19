@@ -1,11 +1,24 @@
 @startuml
 left to right direction
+
 skinparam packageStyle rectangle
 skinparam actorStyle awesome
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 35
+skinparam ranksep 45
+skinparam ArrowColor #4A5568
+skinparam ActorBorderColor #2D3748
+skinparam ActorBackgroundColor #D9ECFF
+skinparam UsecaseBorderColor #2D3748
+skinparam UsecaseBackgroundColor #FFFFFF
+skinparam RectangleBorderColor #4A5568
+skinparam backgroundColor #FFFFFF
 
 title University Information System - Use Case Diagram
 
 actor "User" as User
+actor "Employee" as Employee
 actor "Student" as Student
 actor "Graduate Student" as GraduateStudent
 actor "Teacher" as Teacher
@@ -17,63 +30,88 @@ actor "Tech Support Specialist" as TechSupport
 
 User <|-- Student
 Student <|-- GraduateStudent
-User <|-- Teacher
-User <|-- Manager
-User <|-- Admin
-User <|-- Researcher
-User <|-- Librarian
-User <|-- TechSupport
+User <|-- Employee
+Employee <|-- Teacher
+Employee <|-- Manager
+Employee <|-- Admin
+Employee <|-- Researcher
+Employee <|-- Librarian
+Employee <|-- TechSupport
 
-rectangle "University Information System" {
-  usecase "Authenticate" as UC_Login
-  usecase "Choose Language\n(KZ / EN / RU)" as UC_Language
-  usecase "Change Password" as UC_ChangePassword
-  usecase "View News" as UC_ViewNews
-  usecase "Send Message" as UC_SendMessage
-  usecase "Subscribe to Journal" as UC_SubscribeJournal
-  usecase "Receive Journal\nNotification" as UC_ReceiveNotification
+rectangle "University Information System" #FFFFFF {
+  package "Common User Services" #D9ECFF {
+    usecase "Authenticate" as UC_Login
+    usecase "Choose Language\n(KZ / EN / RU)" as UC_Language
+    usecase "Change Password" as UC_ChangePassword
+    usecase "View News" as UC_ViewNews
+    usecase "Subscribe to Journal" as UC_SubscribeJournal
+    usecase "Receive Journal\nNotification" as UC_ReceiveNotification
+    usecase "Submit Tech Request" as UC_SubmitTech
+  }
 
-  usecase "View Courses" as UC_ViewCourses
-  usecase "Register for Course" as UC_RegisterCourse
-  usecase "Drop Course" as UC_DropCourse
-  usecase "View Teacher Info" as UC_ViewTeacherInfo
-  usecase "View Marks" as UC_ViewMarks
-  usecase "View Transcript" as UC_ViewTranscript
-  usecase "Rate Teacher" as UC_RateTeacher
-  usecase "Order Book" as UC_OrderBook
-  usecase "View Attendance" as UC_ViewAttendance
-  usecase "View Organization Info" as UC_ViewOrganization
-  usecase "Manage Diploma Papers" as UC_DiplomaPapers
+  package "Messaging" #EEEEEE {
+    usecase "Send Message" as UC_SendMessage
+    usecase "Read Messages" as UC_ReadMessages
+  }
 
-  usecase "Manage Course Files" as UC_ManageCourseFiles
-  usecase "Put Marks" as UC_PutMarks
-  usecase "View Students" as UC_ViewStudents
-  usecase "Send Complaint\nto Dean" as UC_Complaint
-  usecase "Mark Attendance" as UC_MarkAttendance
+  package "Academic / Course" #FFF4CC {
+    usecase "View Courses" as UC_ViewCourses
+    usecase "Register for Course" as UC_RegisterCourse
+    usecase "Drop Course" as UC_DropCourse
+    usecase "View Teacher Info" as UC_ViewTeacherInfo
+    usecase "View Marks" as UC_ViewMarks
+    usecase "View Transcript" as UC_ViewTranscript
+    usecase "Rate Teacher" as UC_RateTeacher
+    usecase "View Attendance" as UC_ViewAttendance
+    usecase "View Course Files" as UC_ViewCourseFiles
+    usecase "Manage Diploma Papers" as UC_DiplomaPapers
+  }
 
-  usecase "Create Course" as UC_CreateCourse
-  usecase "Assign Teachers\nto Course" as UC_AssignTeachers
-  usecase "Approve / Reject\nRegistration" as UC_ApproveRegistration
-  usecase "Manage News" as UC_ManageNews
-  usecase "Generate Academic Report" as UC_Report
-  usecase "View Students / Teachers\nSorted" as UC_SortedInfo
+  package "Teaching" #FFF4CC {
+    usecase "Manage Course Files" as UC_ManageCourseFiles
+    usecase "Put Marks" as UC_PutMarks
+    usecase "View Students" as UC_ViewStudents
+    usecase "Send Complaint\nto Dean" as UC_Complaint
+    usecase "Mark Attendance" as UC_MarkAttendance
+    usecase "Remove Student\nfrom Course" as UC_RemoveStudent
+  }
 
-  usecase "Manage Users" as UC_ManageUsers
-  usecase "View Action Logs" as UC_ViewLogs
+  package "Management" #EEEEEE {
+    usecase "Create / Delete Course" as UC_CreateCourse
+    usecase "Assign Teachers\nto Course" as UC_AssignTeachers
+    usecase "Approve / Reject\nRegistration" as UC_ApproveRegistration
+    usecase "Manage News" as UC_ManageNews
+    usecase "Generate Academic Report" as UC_Report
+    usecase "View Students / Teachers\nSorted" as UC_SortedInfo
+    usecase "Graduate Student" as UC_GraduateStudent
+  }
 
-  usecase "Manage Books" as UC_ManageBooks
-  usecase "Approve / Reject\nBook Orders" as UC_BookOrders
+  package "Administration" #EEEEEE {
+    usecase "Manage Users" as UC_ManageUsers
+    usecase "View Action Logs" as UC_ViewLogs
+  }
 
-  usecase "Submit Tech Request" as UC_SubmitTech
-  usecase "View Tech Requests" as UC_ViewTech
-  usecase "Accept / Reject /\nComplete Request" as UC_ProcessTech
+  package "Library" #EEEEEE {
+    usecase "View Books" as UC_ViewBooks
+    usecase "Order Book" as UC_OrderBook
+    usecase "Manage Books" as UC_ManageBooks
+    usecase "Approve / Reject\nBook Orders" as UC_BookOrders
+  }
 
-  usecase "Add Research Paper" as UC_AddPaper
-  usecase "Calculate h-index" as UC_HIndex
-  usecase "Print Own Papers\nSorted" as UC_PrintOwnPapers
-  usecase "Print All Papers\nSorted" as UC_PrintAllPapers
-  usecase "View Research Projects" as UC_ViewProjects
-  usecase "Publish Paper to Journal" as UC_PublishPaper
+  package "Tech Support" #EEEEEE {
+    usecase "View Tech Requests" as UC_ViewTech
+    usecase "Accept / Reject /\nComplete Request" as UC_ProcessTech
+  }
+
+  package "Research" #DFF4DD {
+    usecase "Add Research Paper" as UC_AddPaper
+    usecase "Calculate h-index" as UC_HIndex
+    usecase "Print Own Papers\nSorted" as UC_PrintOwnPapers
+    usecase "Print All Papers\nSorted" as UC_PrintAllPapers
+    usecase "View Research Projects" as UC_ViewProjects
+    usecase "Publish Paper to Journal" as UC_PublishPaper
+    usecase "Create Research News" as UC_CreateResearchNews
+  }
 }
 
 User --> UC_Login
@@ -84,6 +122,9 @@ User --> UC_SubscribeJournal
 User --> UC_ReceiveNotification
 User --> UC_SubmitTech
 
+Employee --> UC_SendMessage
+Employee --> UC_ReadMessages
+
 Student --> UC_ViewCourses
 Student --> UC_RegisterCourse
 Student --> UC_DropCourse
@@ -91,9 +132,10 @@ Student --> UC_ViewTeacherInfo
 Student --> UC_ViewMarks
 Student --> UC_ViewTranscript
 Student --> UC_RateTeacher
+Student --> UC_ViewBooks
 Student --> UC_OrderBook
 Student --> UC_ViewAttendance
-Student --> UC_ViewOrganization
+Student --> UC_ViewCourseFiles
 
 GraduateStudent --> UC_DiplomaPapers
 GraduateStudent --> UC_HIndex
@@ -103,10 +145,10 @@ Teacher --> UC_ViewCourses
 Teacher --> UC_ManageCourseFiles
 Teacher --> UC_PutMarks
 Teacher --> UC_ViewStudents
-Teacher --> UC_SendMessage
 Teacher --> UC_Complaint
 Teacher --> UC_MarkAttendance
 Teacher --> UC_ViewAttendance
+Teacher --> UC_RemoveStudent
 Teacher --> UC_HIndex
 Teacher --> UC_PrintOwnPapers
 Teacher --> UC_PrintAllPapers
@@ -117,14 +159,15 @@ Manager --> UC_ApproveRegistration
 Manager --> UC_ManageNews
 Manager --> UC_Report
 Manager --> UC_SortedInfo
-Manager --> UC_SendMessage
+Manager --> UC_GraduateStudent
+Manager --> UC_RemoveStudent
 
 Admin --> UC_ManageUsers
 Admin --> UC_ViewLogs
-Admin --> UC_SendMessage
 
 Librarian --> UC_ManageBooks
 Librarian --> UC_BookOrders
+Librarian --> UC_ViewBooks
 
 TechSupport --> UC_ViewTech
 TechSupport --> UC_ProcessTech
@@ -135,12 +178,20 @@ Researcher --> UC_PrintOwnPapers
 Researcher --> UC_PrintAllPapers
 Researcher --> UC_ViewProjects
 Researcher --> UC_PublishPaper
-Researcher --> UC_SendMessage
 
 UC_RegisterCourse .> UC_Login : <<include>>
 UC_PutMarks .> UC_Login : <<include>>
-UC_AddPaper .> UC_PublishPaper : <<extend>>
+UC_ManageUsers .> UC_Login : <<include>>
+UC_ProcessTech .> UC_ViewTech : <<include>>
+UC_PublishPaper .> UC_CreateResearchNews : <<include>>
 UC_PublishPaper .> UC_ReceiveNotification : <<include>>
-UC_PublishPaper .> UC_ViewNews : <<include>>
+UC_PublishPaper .> UC_AddPaper : <<extend>>
+
+legend right
+  <back:#D9ECFF> User/common access </back>
+  <back:#DFF4DD> Research use cases </back>
+  <back:#FFF4CC> Academic and course use cases </back>
+  <back:#EEEEEE> System, staff, persistence-facing use cases </back>
+endlegend
 
 @enduml
