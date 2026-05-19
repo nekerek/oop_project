@@ -10,8 +10,10 @@ import model.user.*;
 import repository.*;
 
 /**
- * PATTERN: Factory
- * Creates User subclass instances without exposing constructors to callers.
+ * Factory for creating concrete {@link User} subclasses.
+ *
+ * <p>The factory centralizes role construction and keeps controller code from
+ * depending directly on every user constructor.</p>
  */
 public class UserFactory {
 
@@ -20,6 +22,20 @@ public class UserFactory {
         ADMIN, LIBRARIAN, TECH_SUPPORT, RESEARCHER
     }
 
+    /**
+     * Creates a user for the requested role.
+     *
+     * @param type role type to instantiate
+     * @param name first name
+     * @param surname family name
+     * @param birthDate date of birth
+     * @param phoneNumber contact phone
+     * @param email email address
+     * @param password initial password
+     * @param extras role-specific constructor values
+     * @return concrete user instance
+     * @throws IllegalArgumentException if the role type is unsupported
+     */
     public static User createUser(UserType type,
                                    String name, String surname, String birthDate,
                                    String phoneNumber, String email, String password,

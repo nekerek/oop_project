@@ -12,13 +12,10 @@ import repository.*;
 import service.*;
 
 /**
-* @generated
-*/
+ * Course material file metadata posted by a teacher.
+ */
 public class File implements Serializable {
     
-    /**
-    * @generated
-    */
     private String fileName;
     private String courseId;
     private String description;
@@ -28,6 +25,13 @@ public class File implements Serializable {
         
     }
 
+    /**
+     * Creates a course file record with the current timestamp.
+     *
+     * @param fileName displayed file name
+     * @param courseId course identifier
+     * @param description file description
+     */
     public File(String fileName, String courseId, String description) {
         this.fileName = fileName;
         this.courseId = courseId;

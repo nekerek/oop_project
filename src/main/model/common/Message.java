@@ -13,8 +13,8 @@ import repository.*;
 import service.*;
 
 /**
-* @generated
-*/
+ * Official internal message between university employees or system users.
+ */
 public class Message implements Serializable {
     
     private String messageFrom;
@@ -23,6 +23,14 @@ public class Message implements Serializable {
     private String text;
     private Date msgDate;
 
+    /**
+     * Creates a message with the current timestamp.
+     *
+     * @param messageFrom sender login or display name
+     * @param messageTo receiver login or display name
+     * @param title message subject
+     * @param text message body
+     */
     public Message(String messageFrom, String messageTo, String title, String text) {
         this.messageFrom = messageFrom;
         this.messageTo = messageTo;

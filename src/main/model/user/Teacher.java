@@ -11,8 +11,11 @@ import repository.*;
 import service.*;
 
 /**
- * Teacher. Professors ARE always researchers (ResearcherMixin auto-created).
- * Other positions can become researchers via becomeResearcher().
+ * Teacher role responsible for course materials, marks, complaints, attendance,
+ * and student information.
+ *
+ * <p>Professors are initialized as researchers automatically. Other teacher
+ * statuses can gain researcher capabilities by calling {@link #becomeResearcher()}.</p>
  */
 public class Teacher extends Employee {
     private static final long serialVersionUID = 1L;
@@ -26,6 +29,18 @@ public class Teacher extends Employee {
 
     public Teacher() {}
 
+    /**
+     * Creates a teacher with the specified academic status.
+     *
+     * @param name first name
+     * @param surname family name
+     * @param birthDate date of birth
+     * @param phoneNumber contact phone
+     * @param email email address
+     * @param password initial password
+     * @param teacherStatus academic position
+     * @param experience teaching experience description
+     */
     public Teacher(String name, String surname, String birthDate,
                    String phoneNumber, String email, String password,
                    Status teacherStatus, String experience) {
@@ -54,6 +69,14 @@ public class Teacher extends Employee {
     /**
      * Sends a complaint about a student to the dean (Manager).
      */
+    /**
+     * Sends a complaint about a student to the dean/manager as an official message.
+     *
+     * @param student student being reported
+     * @param reason complaint reason
+     * @param urgency complaint urgency level
+     * @param dean manager receiving the complaint
+     */
     public void sendComplaint(Student student, String reason,
                               ComplaintUrgency urgency, Manager dean) {
         String subject = "[" + urgency + "] Complaint about "
@@ -69,6 +92,15 @@ public class Teacher extends Employee {
     }
 
     // ── Marks ─────────────────────────────────────────────────────────────
+    /**
+     * Adds a mark for a student in a course.
+     *
+     * @param courseName course title
+     * @param studentId student identifier
+     * @param firstAtt first attestation score
+     * @param secondAtt second attestation score
+     * @param finalGrade final exam score
+     */
     public void putMark(String courseName, String studentId,
                         Double firstAtt, Double secondAtt, Double finalGrade) {
         Mark m = new Mark(courseName, studentId, firstAtt, secondAtt, finalGrade);
@@ -79,6 +111,12 @@ public class Teacher extends Employee {
         }
     }
 
+    /**
+     * Returns all marks recorded for a course.
+     *
+     * @param courseName course title used for filtering
+     * @return formatted mark list
+     */
     public String viewMarks(String courseName) {
         String s = "";
         int i = 0;
@@ -97,11 +135,25 @@ public class Teacher extends Employee {
         return s.isEmpty() ? "No marks for this course." : s;
     }
 
+    /**
+     * Records attendance for a student in a course.
+     *
+     * @param courseId course identifier
+     * @param studentId student identifier
+     * @param present whether the student was present
+     * @param note optional attendance note
+     */
     public void markAttendance(String courseId, String studentId,
                                boolean present, String note) {
         Database.attendance.add(new Attendance(courseId, studentId, present, note));
     }
 
+    /**
+     * Returns attendance records for a course.
+     *
+     * @param courseId course identifier
+     * @return formatted attendance records
+     */
     public String viewAttendance(String courseId) {
         String ans = "";
         int i = 0;

@@ -10,8 +10,13 @@ import repository.*;
 import service.*;
 
 /**
- * Interface: any class that can generate a text report.
+ * Contract for classes that can generate text reports.
  */
 public interface Reportable {
+    /**
+     * Generates a human-readable report.
+     *
+     * @return report text
+     */
     String generateReport();
 }

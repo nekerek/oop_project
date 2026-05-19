@@ -14,9 +14,10 @@ import repository.*;
 import service.*;
 
 /**
- * University news item.
- * Research topic news is automatically PINNED (sorted first).
- * Implements Comparable so Research news appears before general news.
+ * University news item with optional comments and topic-based priority.
+ *
+ * <p>News with topic {@code Research} is pinned and sorted before general
+ * news. Remaining items are ordered by publication date.</p>
  */
 public class News implements Serializable, Comparable<News> {
     private static final long serialVersionUID = 1L;
@@ -33,6 +34,14 @@ public class News implements Serializable, Comparable<News> {
         this(id, "General", title, text);
     }
 
+    /**
+     * Creates a news item.
+     *
+     * @param id news identifier
+     * @param topic news topic
+     * @param title title shown in the news list
+     * @param text body text
+     */
     public News(String id, String topic, String title, String text) {
         this.id = id;
         this.topic = topic;
@@ -43,6 +52,11 @@ public class News implements Serializable, Comparable<News> {
         this.pinned = "Research".equalsIgnoreCase(topic);
     }
 
+    /**
+     * Adds a comment to this news item.
+     *
+     * @param comment comment text
+     */
     public void addComment(String comment) { comments.add(comment); }
 
     /** Pinned news (Research) sorts before regular news; then newest first. */

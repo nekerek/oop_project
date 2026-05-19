@@ -19,15 +19,17 @@ import repository.*;
 import service.*;
 
 /**
- * Main entry point.
- * All menu text passes through I18n.t(key, language) so it renders
- * in the user's chosen language (KZ / EN / RU).
+ * Console entry point and role-based menu controller.
  *
- * PATTERNS:
- *   1. Singleton   Database.getInstance()
- *   2. Factory     UserFactory.createUser(...)
- *   3. Observer    UniversityJournal + Subscribable
- *   4. Strategy    PaperComparators (pluggable Comparator<ResearchPaper>)
+ * <p>The controller handles startup, language selection, authentication,
+ * demo data seeding, and dispatching authenticated users to their role
+ * menus. Menu labels are resolved through {@link I18n} for KZ, EN, and RU
+ * language support.</p>
+ *
+ * <p>Architectural patterns used by the application include Singleton
+ * ({@link Database}), Factory ({@link UserFactory}), Observer
+ * ({@link UniversityJournal} and {@link Subscribable}), and Strategy
+ * ({@link PaperComparators}).</p>
  */
 public class MainController {
 
@@ -46,6 +48,15 @@ public class MainController {
     }
 
     // ─────────────────────────────────────────────────────────────────────
+    /**
+     * Starts the console application and authenticates a user.
+     *
+     * @param args command-line arguments, not used
+     * @throws IOException if console input cannot be read
+     * @throws CreditOverFlow if seeded or menu-driven registration exceeds credit limits
+     * @throws CourseFailLimitException if a student exceeds the course fail limit
+     * @throws LowHIndexException if seeded supervisor assignment violates h-index rules
+     */
     public static void main(String[] args) throws IOException, CreditOverFlow,
             CourseFailLimitException, LowHIndexException {
         System.out.println("========================================");
@@ -107,6 +118,12 @@ public class MainController {
 
     // SEED
     // ─────────────────────────────────────────────────────────────────────
+    /**
+     * Creates initial demo users, courses, marks, journals, and research data.
+     *
+     * @throws LowHIndexException if the seeded graduate supervisor does not meet
+     *                            the minimum h-index rule
+     */
     static void seedDemoData() throws LowHIndexException {
         System.out.println("[SEED] Creating demo data...");
 
@@ -235,6 +252,11 @@ public class MainController {
         System.out.println("------------------------------------------------------------\n");
     }
 
+    /**
+     * Allows any authenticated user to subscribe to an available university journal.
+     *
+     * @param user user subscribing to the journal
+     */
     static void subscribeToJournal(User user) {
         if (Database.journals.isEmpty()) {
             System.out.println("No journals.");
@@ -258,6 +280,12 @@ public class MainController {
         }
     }
 
+    /**
+     * Collects research papers from every researcher-capable user in the system.
+     *
+     * @return combined list of research papers owned by researchers, teachers,
+     *         graduate students, and researcher-enabled bachelor students
+     */
     static List<ResearchPaper> collectAllResearchPapers() {
         List<ResearchPaper> papers = new ArrayList<>();
         for (User u : Database.users) {
@@ -274,6 +302,11 @@ public class MainController {
         return papers;
     }
 
+    /**
+     * Prints all university research papers using the requested ordering strategy.
+     *
+     * @param comparator strategy used to sort papers before printing
+     */
     static void printAllResearchPapers(Comparator<ResearchPaper> comparator) {
         List<ResearchPaper> papers = collectAllResearchPapers();
         papers.sort(comparator);
@@ -284,6 +317,13 @@ public class MainController {
         for (ResearchPaper p : papers) System.out.println(p);
     }
 
+    /**
+     * Reads a paper sorting option from the console.
+     *
+     * @param lang language used for the sort prompt
+     * @return comparator matching the selected strategy
+     * @throws IOException if console input cannot be read
+     */
     static Comparator<ResearchPaper> choosePaperComparator(Language lang) throws IOException {
         System.out.println(I18n.t("msg.sort_choose", lang));
         int sc = Integer.parseInt(reader.readLine().trim());

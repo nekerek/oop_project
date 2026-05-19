@@ -13,12 +13,10 @@ import repository.*;
 import service.*;
 
 /**
- * University research journal.
+ * University research journal acting as the subject in the Observer pattern.
  *
- * PATTERN: Observer
- *   - Subject: UniversityJournal
- *   - Observer: Subscribable (any User can subscribe)
- *   When a new paper is published, ALL subscribers are notified.
+ * <p>Any {@link Subscribable} user can subscribe. Publishing a paper stores it,
+ * creates a pinned research-news announcement, and notifies all subscribers.</p>
  */
 public class UniversityJournal implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -27,12 +25,22 @@ public class UniversityJournal implements Serializable {
     private List<Subscribable> subscribers;
     private List<ResearchPaper> papers;
 
+    /**
+     * Creates an empty university journal.
+     *
+     * @param name journal name
+     */
     public UniversityJournal(String name) {
         this.name = name;
         this.subscribers = new ArrayList<>();
         this.papers = new ArrayList<>();
     }
 
+    /**
+     * Subscribes a user to paper publication notifications.
+     *
+     * @param s subscriber to add
+     */
     public void subscribe(Subscribable s) {
         if (!subscribers.contains(s)) {
             subscribers.add(s);
@@ -44,7 +52,12 @@ public class UniversityJournal implements Serializable {
         subscribers.remove(s);
     }
 
-    /** Publishes a paper and notifies all subscribers. */
+    /**
+     * Publishes a paper, creates a research news announcement, and notifies subscribers.
+     *
+     * @param paper paper being published
+     * @param authorName author name used in news and notifications
+     */
     public void publishPaper(ResearchPaper paper, String authorName) {
         papers.add(paper);
         // Auto-announce as Research news

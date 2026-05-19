@@ -12,8 +12,11 @@ import repository.*;
 import service.*;
 
 /**
- * Abstract base class for all users in the system.
- * Every subclass must implement getRole().
+ * Base class for all authenticated users in the university system.
+ *
+ * <p>The class stores shared identity, contact, login, password, and language
+ * information. It also provides common behavior such as news viewing,
+ * password changes, equality by login, and journal subscription notifications.</p>
  */
 public abstract class User implements Comparable<User>, Serializable, Subscribable {
     private static final long serialVersionUID = 1L;
@@ -42,10 +45,19 @@ public abstract class User implements Comparable<User>, Serializable, Subscribab
         this.language = Language.EN;
     }
 
-    /** Every subclass declares its role. */
+    /**
+     * Returns a display name for the concrete system role.
+     *
+     * @return role name shown in menus and user listings
+     */
     public abstract String getRole();
 
     // ── News tab ──────────────────────────────────────────────────────────
+    /**
+     * Builds a formatted list of university news visible to the user.
+     *
+     * @return news list, or a message if no news is available
+     */
     public String viewNewsTab() {
         String ans = "";
         int i = 0;
@@ -60,10 +72,24 @@ public abstract class User implements Comparable<User>, Serializable, Subscribab
     }
 
     // ── Auth ──────────────────────────────────────────────────────────────
+    /**
+     * Checks whether the provided credentials match this user.
+     *
+     * @param login login entered by the user
+     * @param password password entered by the user
+     * @return {@code true} if both login and password match
+     */
     public boolean signIn(String login, String password) {
         return this.login.equals(login) && this.password.equals(password);
     }
 
+    /**
+     * Changes the user's password after validating the current password.
+     *
+     * @param oldPassword current password
+     * @param newPassword replacement password
+     * @return {@code true} when the password was changed
+     */
     public boolean changePassword(String oldPassword, String newPassword) {
         if (oldPassword.equals(this.password)) {
             this.password = newPassword;
@@ -73,6 +99,13 @@ public abstract class User implements Comparable<User>, Serializable, Subscribab
     }
 
     // ── Observer callback (any User can subscribe to journals) ────────────
+    /**
+     * Receives a journal publication notification.
+     *
+     * @param journalName journal that published the paper
+     * @param paperTitle title of the new paper
+     * @param authorName author shown in the notification
+     */
     @Override
     public void onNewPaperPublished(String journalName, String paperTitle, String authorName) {
         System.out.println("[JOURNAL] " + getName() + ": new paper in '" + journalName

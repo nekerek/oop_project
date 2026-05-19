@@ -12,8 +12,10 @@ import repository.*;
 import service.*;
 
 /**
- * Mark for one student on one course.
- * Total = 1st attestation + 2nd attestation + final exam.
+ * Assessment result for one student in one course.
+ *
+ * <p>The total grade is calculated from first attestation, second attestation,
+ * and final exam scores.</p>
  */
 public class Mark implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -25,6 +27,15 @@ public class Mark implements Serializable {
     private Double finalGrade;
     private Double totalGrade;
 
+    /**
+     * Creates a mark and calculates the total grade.
+     *
+     * @param courseName course title
+     * @param studentId student identifier
+     * @param firstAtt first attestation score
+     * @param secondAtt second attestation score
+     * @param finalGrade final exam score
+     */
     public Mark(String courseName, String studentId,
                 Double firstAtt, Double secondAtt, Double finalGrade) {
         this.courseName = courseName;
@@ -35,8 +46,18 @@ public class Mark implements Serializable {
         this.totalGrade = firstAtt + secondAtt + finalGrade;
     }
 
+    /**
+     * Checks whether the student passed the course.
+     *
+     * @return {@code true} when total grade is at least 50
+     */
     public boolean isPassed() { return totalGrade >= 50; }
 
+    /**
+     * Converts the numeric total grade to a letter grade.
+     *
+     * @return letter grade according to the university scale
+     */
     public String convertToLetter() {
         if (totalGrade >= 95) return "A";
         if (totalGrade >= 90) return "A-";
@@ -51,6 +72,11 @@ public class Mark implements Serializable {
         return "F";
     }
 
+    /**
+     * Converts the numeric total grade to a GPA value.
+     *
+     * @return GPA value formatted as text
+     */
     public String convertToGPA() {
         if (totalGrade >= 95) return "4.0";
         if (totalGrade >= 90) return "3.67";

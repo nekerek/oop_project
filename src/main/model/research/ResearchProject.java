@@ -13,7 +13,7 @@ import repository.*;
 import service.*;
 
 /**
- * A research project has a topic, published papers, and participants (Researchers only).
+ * Research project containing a topic, published papers, and researcher participants.
  */
 public class ResearchProject implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -22,6 +22,11 @@ public class ResearchProject implements Serializable {
     private List<ResearchPaper> publishedPapers;
     private List<User> participants;
 
+    /**
+     * Creates an empty research project.
+     *
+     * @param topic project topic
+     */
     public ResearchProject(String topic) {
         this.topic = topic;
         this.publishedPapers = new ArrayList<>();
@@ -29,7 +34,10 @@ public class ResearchProject implements Serializable {
     }
 
     /**
-     * Only Researchers can join. Throws NotAResearcherException otherwise.
+     * Adds a participant after validating researcher eligibility.
+     *
+     * @param user user attempting to join the project
+     * @throws NotAResearcherException if the user does not have researcher capability
      */
     public void addParticipant(User user) throws NotAResearcherException {
         boolean isResearcher =

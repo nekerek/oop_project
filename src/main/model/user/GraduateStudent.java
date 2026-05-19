@@ -12,8 +12,11 @@ import repository.*;
 import service.*;
 
 /**
- * Graduate student (Master or PhD). Always a researcher.
- * Must have a supervisor with h-index >= 3.
+ * Graduate student model for master and PhD students.
+ *
+ * <p>Graduate students are always researchers and may have diploma papers.
+ * Supervisor assignment enforces the project rule that the supervisor must be
+ * a researcher with h-index of at least 3.</p>
  */
 public class GraduateStudent extends Student {
     private static final long serialVersionUID = 1L;
@@ -23,6 +26,20 @@ public class GraduateStudent extends Student {
     private List<ResearchPaper> diplomaPapers;
     private ResearcherMixin researchMixin;
 
+    /**
+     * Creates a graduate student with researcher capabilities enabled.
+     *
+     * @param name first name
+     * @param surname family name
+     * @param birthDate date of birth
+     * @param phoneNumber contact phone
+     * @param email email address
+     * @param password initial password
+     * @param id student identifier
+     * @param yearOfStudy current year of study
+     * @param faculty faculty affiliation
+     * @param graduateDegree graduate degree, usually MASTER or PHD
+     */
     public GraduateStudent(String name, String surname, String birthDate,
                             String phoneNumber, String email, String password,
                             String id, Integer yearOfStudy, Faculty faculty,
@@ -35,7 +52,10 @@ public class GraduateStudent extends Student {
     }
 
     /**
-     * Assigns a supervisor. Throws LowHIndexException if supervisor h-index < 3.
+     * Assigns a research supervisor after validating researcher status and h-index.
+     *
+     * @param supervisor teacher selected as supervisor
+     * @throws LowHIndexException if the teacher is not a researcher or has h-index below 3
      */
     public void setSupervisor(Teacher supervisor) throws LowHIndexException {
         if (!supervisor.isResearcher()) {
@@ -52,6 +72,11 @@ public class GraduateStudent extends Student {
                 + supervisor.getName() + " (h=" + h + ")");
     }
 
+    /**
+     * Adds a diploma paper and includes it in the student's research profile.
+     *
+     * @param paper diploma paper to register
+     */
     public void addDiplomaPaper(ResearchPaper paper) {
         diplomaPapers.add(paper);
         researchMixin.addPaper(paper);

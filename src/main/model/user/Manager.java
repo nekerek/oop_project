@@ -13,8 +13,10 @@ import repository.*;
 import service.*;
 
 /**
- * University manager. Handles course registration, news, reports.
- * Implements Reportable interface.
+ * University manager role for academic operations.
+ *
+ * <p>Managers create courses, approve registration requests, assign teachers,
+ * manage news, inspect students and teachers, and generate academic reports.</p>
  */
 public class Manager extends Employee implements Reportable {
     private static final long serialVersionUID = 1L;
@@ -30,6 +32,13 @@ public class Manager extends Employee implements Reportable {
 
     // ── Courses ───────────────────────────────────────────────────────────
     /** FIXED: was never adding when courses list was empty */
+    /**
+     * Creates a basic major course if the course identifier is not already used.
+     *
+     * @param name course name
+     * @param credits credit count
+     * @param courseId unique course identifier
+     */
     public void createCourse(String name, int credits, String courseId) {
         for (Course course : Database.courses) {
             if (course.getCourseId().equals(courseId)) {
@@ -41,6 +50,16 @@ public class Manager extends Employee implements Reportable {
         System.out.println("Course created: " + name);
     }
 
+    /**
+     * Creates a course with registration metadata.
+     *
+     * @param name course name
+     * @param credits credit count
+     * @param courseId unique course identifier
+     * @param type course category
+     * @param school school offering the course
+     * @param year target year of study
+     */
     public void createCourse(String name, int credits, String courseId,
                               CourseType type, String school, int year) {
         for (Course c : Database.courses) {
@@ -50,6 +69,12 @@ public class Manager extends Employee implements Reportable {
         System.out.println("Course created: " + name + " [" + type + "]");
     }
 
+    /**
+     * Assigns a teacher login/name to a course instructor list.
+     *
+     * @param courseId course identifier
+     * @param teacherName teacher value stored for the assignment
+     */
     public void assignCourseToTeachers(String courseId, String teacherName) {
         for (Course course : Database.courses) {
             if (course.getCourseId().equals(courseId)) {
@@ -66,6 +91,14 @@ public class Manager extends Employee implements Reportable {
                 : Database.studentRegistration.toString();
     }
 
+    /**
+     * Approves or rejects a pending student course registration.
+     *
+     * @param studentId student identifier
+     * @param courseId course identifier
+     * @param approve expected value {@code ACCEPT} to approve, anything else rejects
+     * @return result message for the manager menu
+     */
     public String approveRegistration(String studentId, String courseId,
                                        String approve) {
         Student st = null;
@@ -138,6 +171,11 @@ public class Manager extends Employee implements Reportable {
     }
 
     /** FIXED: s1 vs s2 (was reversed  alphabetical now A→Z) */
+    /**
+     * Returns students sorted alphabetically by name.
+     *
+     * @return formatted sorted student list
+     */
     public String orderStudentsAlphabetically() {
         Vector<Student> s = new Vector<>();
         for (User u : Database.users)
@@ -146,6 +184,11 @@ public class Manager extends Employee implements Reportable {
         return buildStudentList(s);
     }
 
+    /**
+     * Returns students sorted by GPA using the GPA comparator strategy.
+     *
+     * @return formatted sorted student list
+     */
     public String orderStudentsByGPA() {
         Vector<Student> s = new Vector<>();
         for (User u : Database.users)
@@ -198,6 +241,14 @@ public class Manager extends Employee implements Reportable {
     }
 
     // ── News ──────────────────────────────────────────────────────────────
+    /**
+     * Adds a news item and re-sorts news so research items remain pinned.
+     *
+     * @param id news identifier
+     * @param topic news topic
+     * @param title news title
+     * @param text news body
+     */
     public void addNews(String id, String topic, String title, String text) {
         Database.news.add(new News(id, topic, title, text));
         Collections.sort(Database.news);
@@ -242,6 +293,12 @@ public class Manager extends Employee implements Reportable {
 
     // ── Reportable interface ──────────────────────────────────────────────
     @Override
+    /**
+     * Generates aggregate academic performance statistics.
+     *
+     * @return text report containing student count, mark count, score extremes,
+     *         average score, and fail count
+     */
     public String generateReport() {
         return "=== ACADEMIC REPORT ===\n"
                 + "Total students: " + Database.users.stream()

@@ -11,7 +11,10 @@ import model.user.*;
 import repository.*;
 
 /**
- * Utility: ready-made Comparators for ResearchPaper.
+ * Strategy collection for sorting research papers.
+ *
+ * <p>Each comparator represents a different paper ordering strategy used by
+ * researcher menus and global paper printing.</p>
  */
 public class PaperComparators {
 

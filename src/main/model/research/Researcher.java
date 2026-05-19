@@ -12,21 +12,27 @@ import repository.*;
 import service.*;
 
 /**
- * Standalone Researcher  an employee who is neither Teacher nor Student,
- * but is a researcher (e.g. lab scientist).
+ * Standalone research employee who is not necessarily a teacher or student.
  *
- * Teacher and GraduateStudent also get researcher capabilities via
- * the ResearcherMixin composition object.
- *
- * Design decision: Researcher functionality is provided by ResearcherMixin
- * (composition) so that Teacher, GraduateStudent, AND Researcher all share
- * the same logic without diamond inheritance.
+ * <p>Research behavior is delegated to {@link ResearcherMixin}, the same
+ * composition component used by teacher and graduate-student researcher
+ * variants.</p>
  */
 public class Researcher extends Employee implements Subscribable, Serializable {
     private static final long serialVersionUID = 1L;
 
     private ResearcherMixin researchMixin;
 
+    /**
+     * Creates a standalone researcher with an empty research profile.
+     *
+     * @param name first name
+     * @param surname family name
+     * @param birthDate date of birth
+     * @param phoneNumber contact phone
+     * @param email email address
+     * @param password initial password
+     */
     public Researcher(String name, String surname, String birthDate,
                       String phoneNumber, String email, String password) {
         super(name, surname, birthDate, phoneNumber, email, password);
@@ -35,11 +41,21 @@ public class Researcher extends Employee implements Subscribable, Serializable {
 
     public ResearcherMixin getResearchMixin() { return researchMixin; }
 
+    /**
+     * Calculates the researcher's h-index.
+     *
+     * @return h-index based on owned research papers
+     */
     public int calculateHIndex() { return researchMixin.calculateHIndex(); }
 
     public void addPaper(ResearchPaper p) { researchMixin.addPaper(p); }
     public void addProject(ResearchProject p) { researchMixin.addProject(p); }
 
+    /**
+     * Prints owned papers using a comparator strategy.
+     *
+     * @param c sorting strategy
+     */
     public void printPapers(Comparator<ResearchPaper> c) { researchMixin.printPapers(c); }
 
     @Override

@@ -13,7 +13,8 @@ import repository.*;
 import service.*;
 
 /**
- * Bachelor student. Can optionally become a researcher.
+ * General bachelor student model with academic, registration, library, and
+ * optional researcher behavior.
  */
 public class Student extends User {
     private static final long serialVersionUID = 1L;
@@ -55,6 +56,18 @@ public class Student extends User {
     }
 
     // ── Course registration ───────────────────────────────────────────────
+    /**
+     * Creates a pending course registration request for this student.
+     *
+     * <p>The request is stored for manager approval. Registration is rejected
+     * when the student would exceed 21 selected credits, the course is
+     * unavailable, or the student has already failed the same course three
+     * times.</p>
+     *
+     * @param courseID identifier of the requested course
+     * @throws CreditOverFlow if registration exceeds the credit limit or the course is unavailable
+     * @throws CourseFailLimitException if the course was failed three times already
+     */
     public void registerToCourse(String courseID)
             throws CreditOverFlow, CourseFailLimitException {
         for (Course course : Database.courses) {
@@ -86,6 +99,11 @@ public class Student extends User {
     }
 
     // ── GPA & transcript ──────────────────────────────────────────────────
+    /**
+     * Calculates cumulative GPA from all marks belonging to this student.
+     *
+     * @return GPA value formatted as a string
+     */
     public String totalGpa() {
         int i = 0;
         double points = 0.0;
@@ -99,6 +117,12 @@ public class Student extends User {
         return convertToGPA(points / i);
     }
 
+    /**
+     * Converts a numeric total score to the university GPA scale.
+     *
+     * @param t total percentage score
+     * @return GPA value as text
+     */
     public String convertToGPA(Double t) {
         if (t >= 95) return "4.0";
         if (t >= 90) return "3.67";
@@ -113,6 +137,11 @@ public class Student extends User {
         return "0.0";
     }
 
+    /**
+     * Builds a transcript containing marks, letter grades, and cumulative GPA.
+     *
+     * @return formatted transcript for this student
+     */
     public String viewTranscript() {
         int i = 0;
         String s = "=== TRANSCRIPT: " + getName() + " " + getSurname() + " ===\n";
@@ -151,6 +180,11 @@ public class Student extends User {
         return s.isEmpty() ? "No marks yet." : s;
     }
 
+    /**
+     * Returns attendance records for this student.
+     *
+     * @return formatted attendance list, or a message when no records exist
+     */
     public String viewAttendance() {
         String s = "";
         int i = 0;
@@ -213,6 +247,12 @@ public class Student extends User {
         return "Teacher not found.";
     }
 
+    /**
+     * Adds a rating to a teacher found by name.
+     *
+     * @param teacherName teacher name used for lookup
+     * @param rating rating value, expected to be in the UI range of 1 to 5
+     */
     public void rateTeacher(String teacherName, int rating) {
         for (User user : Database.users) {
             if (user instanceof Teacher
@@ -235,6 +275,11 @@ public class Student extends User {
         return s.isEmpty() ? "No books in library." : s;
     }
 
+    /**
+     * Creates a library book order for this student.
+     *
+     * @param bookId identifier of the requested book
+     */
     public void orderBook(String bookId) {
         for (Book book : Database.books) {
             if (book.getId().equals(bookId)) {

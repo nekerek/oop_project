@@ -13,6 +13,11 @@ import service.*;
  * Thrown when a student tries to retake a course they have already failed 3 times.
  */
 public class CourseFailLimitException extends Exception {
+    /**
+     * Creates an exception for a blocked course registration.
+     *
+     * @param courseName course that reached the fail limit
+     */
     public CourseFailLimitException(String courseName) {
         super("Cannot register for '" + courseName + "': failed 3 times already.");
     }

@@ -14,8 +14,9 @@ import repository.*;
 import service.*;
 
 /**
- * Represents a scientific research paper.
- * Implements Comparable  natural order by citations descending.
+ * Research publication model used by researchers, projects, and journals.
+ *
+ * <p>The natural ordering sorts papers by citation count in descending order.</p>
  */
 public class ResearchPaper implements Serializable, Comparable<ResearchPaper> {
     private static final long serialVersionUID = 1L;
@@ -28,6 +29,16 @@ public class ResearchPaper implements Serializable, Comparable<ResearchPaper> {
     private String doi;
     private int citations;
 
+    /**
+     * Creates a research paper.
+     *
+     * @param title paper title
+     * @param authors paper authors
+     * @param journal publishing journal
+     * @param pages article length in pages
+     * @param datePublished publication date
+     * @param doi digital object identifier
+     */
     public ResearchPaper(String title, List<String> authors, String journal,
                          int pages, LocalDate datePublished, String doi) {
         this.title = title;
@@ -40,7 +51,10 @@ public class ResearchPaper implements Serializable, Comparable<ResearchPaper> {
     }
 
     /**
-     * Returns citation string in Plain Text or BibTeX format.
+     * Formats this paper as a citation.
+     *
+     * @param format citation format, either plain text or BibTeX
+     * @return formatted citation string
      */
     public String getCitation(CitationFormat format) {
         if (format == CitationFormat.BIBTEX) {

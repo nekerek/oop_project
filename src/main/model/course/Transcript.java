@@ -10,8 +10,8 @@ import repository.*;
 import service.*;
 
 /**
-* @generated
-*/
+ * Simple transcript entry containing a course and GPA value.
+ */
 public class Transcript {
     
     private String courseName;
@@ -43,8 +43,8 @@ public class Transcript {
     //                          Operations                                  
     
     /**
-    * @generated
-    */
+     * Placeholder for transcript GPA recalculation logic.
+     */
     public void calculateGPA() {
         //TODO
     }

@@ -13,8 +13,12 @@ import service.*;
 import model.course.File;
 
 /**
- * PATTERN: Singleton
- * Single instance holds all in-memory data and handles serialization.
+ * Central persistence and in-memory storage component for the university system.
+ *
+ * <p>The class exposes shared collections used by role services and serializes
+ * them into the {@code data} directory. It also provides a singleton access
+ * point for the storage layer, matching the project architecture requirement
+ * for a single data source.</p>
  */
 @SuppressWarnings("unchecked")
 public class Database implements Serializable {
@@ -24,6 +28,11 @@ public class Database implements Serializable {
     // ── Singleton ─────────────────────────────────────────────────────────
     private static Database instance;
 
+    /**
+     * Returns the single database instance.
+     *
+     * @return shared {@code Database} instance
+     */
     public static Database getInstance() {
         if (instance == null) instance = new Database();
         return instance;
@@ -51,6 +60,13 @@ public class Database implements Serializable {
     public static Vector<ResearchProject>   researchProjects    = new Vector<>();
 
     // ── Save / Load ───────────────────────────────────────────────────────
+    /**
+     * Serializes all persistent collections to disk.
+     *
+     * <p>The method is called after menu operations that mutate application
+     * state, such as registration approval, mark entry, user management,
+     * attendance updates, journal subscription, and news creation.</p>
+     */
     public static void save() {
         write("users.txt",       users);
         write("courses.txt",     courses);
@@ -68,6 +84,13 @@ public class Database implements Serializable {
         System.out.println("[DB] Data saved.");
     }
 
+    /**
+     * Loads persistent collections from disk.
+     *
+     * <p>If a file is missing, the corresponding collection is initialized with
+     * an empty default value. Corrupted serialized files are reset by
+     * {@link #read(String, Object)}.</p>
+     */
     public static void load() {
         users              = (Vector<User>)              read("users.txt",       new Vector<>());
         courses            = (Vector<Course>)            read("courses.txt",     new Vector<>());
@@ -85,6 +108,12 @@ public class Database implements Serializable {
         System.out.println("[DB] Data loaded: " + users.size() + " users.");
     }
 
+    /**
+     * Writes a serializable object to the configured data directory.
+     *
+     * @param filename target file name inside {@code data}
+     * @param obj object to serialize
+     */
     private static void write(String filename, Object obj) {
         new java.io.File(DATA_DIR).mkdirs();
         java.io.File target = new java.io.File(DATA_DIR, filename);
@@ -96,6 +125,13 @@ public class Database implements Serializable {
         }
     }
 
+    /**
+     * Reads a serialized object from the configured data directory.
+     *
+     * @param filename source file name inside {@code data}
+     * @param defaultVal fallback value returned when the file is missing or invalid
+     * @return deserialized object or {@code defaultVal}
+     */
     private static Object read(String filename, Object defaultVal) {
         java.io.File f = new java.io.File(DATA_DIR, filename);
         if (!f.exists()) return defaultVal;

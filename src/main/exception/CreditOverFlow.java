@@ -9,7 +9,15 @@ import model.user.*;
 import repository.*;
 import service.*;
 
+/**
+ * Thrown when a course registration violates credit or availability rules.
+ */
 public class CreditOverFlow extends Exception {
+    /**
+     * Creates an exception with a user-facing explanation.
+     *
+     * @param message validation failure message
+     */
     public CreditOverFlow(String message){
         super(message);
     }

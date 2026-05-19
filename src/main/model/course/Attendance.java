@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.Objects;
 
 /**
- * Attendance record for one student in one course lesson.
+ * Attendance record for one student in one course lesson/session.
  */
 public class Attendance implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -16,6 +16,14 @@ public class Attendance implements Serializable {
     private boolean present;
     private String note;
 
+    /**
+     * Creates an attendance record with the current timestamp.
+     *
+     * @param courseId course identifier
+     * @param studentId student identifier
+     * @param present whether the student attended
+     * @param note optional note about the attendance record
+     */
     public Attendance(String courseId, String studentId, boolean present, String note) {
         this.courseId = courseId;
         this.studentId = studentId;

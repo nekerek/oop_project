@@ -12,7 +12,7 @@ import repository.*;
 import service.*;
 
 /**
- * A technical support request (e.g. fix projector, printer).
+ * Technical support request, such as fixing a projector or printer.
  */
 public class TechRequest implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -23,6 +23,13 @@ public class TechRequest implements Serializable {
     private RequestStatus status;
     private Date createdAt;
 
+    /**
+     * Creates a new technical support request with {@link RequestStatus#NEW}.
+     *
+     * @param id request identifier
+     * @param requesterLogin login of the requester
+     * @param description request description
+     */
     public TechRequest(String id, String requesterLogin, String description) {
         this.id = id;
         this.requesterLogin = requesterLogin;

@@ -12,10 +12,10 @@ import repository.*;
 import service.*;
 
 /**
- * Composition object that provides researcher capabilities.
- * Used by Teacher, GraduateStudent, and Researcher to avoid code duplication.
+ * Composition component that provides reusable researcher capabilities.
  *
- * Pattern: this is the "mixin via composition" approach.
+ * <p>It stores papers and projects and is embedded into roles that can act as
+ * researchers, avoiding duplicated h-index and paper-printing logic.</p>
  */
 public class ResearcherMixin implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -28,12 +28,18 @@ public class ResearcherMixin implements Serializable {
         this.projects = new ArrayList<>();
     }
 
+    /**
+     * Adds a paper to the researcher's publication list.
+     *
+     * @param paper paper to add
+     */
     public void addPaper(ResearchPaper paper) { papers.add(paper); }
     public void addProject(ResearchProject project) { projects.add(project); }
 
     /**
-     * Calculates the h-index:
-     * Largest h such that h papers each have >= h citations.
+     * Calculates the h-index from paper citation counts.
+     *
+     * @return largest h such that h papers each have at least h citations
      */
     public int calculateHIndex() {
         List<Integer> cits = new ArrayList<>();
@@ -48,7 +54,9 @@ public class ResearcherMixin implements Serializable {
     }
 
     /**
-     * Prints papers sorted by the given Comparator.
+     * Prints papers sorted by the given comparator strategy.
+     *
+     * @param c comparator defining paper order
      */
     public void printPapers(Comparator<ResearchPaper> c) {
         List<ResearchPaper> sorted = new ArrayList<>(papers);
