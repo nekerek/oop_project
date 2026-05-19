@@ -1,6 +1,4 @@
-# University Information System
-
-IDE-friendly fixed version. Files are sorted by folders and each folder has a proper Java package.
+# University  System
 
 ## Run
 
